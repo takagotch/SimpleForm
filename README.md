@@ -204,9 +204,26 @@ f.input :role, collection: [:admin, :editor]
 
 
 
+class User 
+  extend ActiveModel::Naming
+  attr_accessor :id, :name
+  def to_model
+    self
+  end
+  def to_key
+    id
+  end
+  def persisted?
+    false
+  end
+end
 
-
-
+class User
+  attr_accessor :id, :name
+  def persisted?
+    false
+  end
+end
 
 ```
 
@@ -278,6 +295,13 @@ f.input :role, collection: [:admin, :editor]
   
   
   
+  
+
+  
+<%= simple_form_for(@user, as: :user, method: :post, url: users_path) do |f| %>
+  <% f.input :name %>
+  <% f.submit 'New user' %>
+<% end %>
   
 ```
 
