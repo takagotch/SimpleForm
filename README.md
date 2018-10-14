@@ -143,6 +143,70 @@ form_for @user do |f|
   f.collection_radio_buttons :options, [[true, 'Yes'], [false, 'No']], :first, :last
 end
 
+form_for @user do |f|
+  f.collection_check_boxes :options, [[true, 'Yes'] ,[false, 'No']], :first, :last
+end
+
+form_for @user do |f|
+  f.collection_check_boxes :role_ids, Role.all, :id, :name
+end
+
+# app/inputs/currency_input.rb
+class CurrencyInput < SimpleForm::Inputs::Base
+  def input()
+    merged_input_options = merge_wrapper_options(input_html_options, wrapper_options)
+    "$ #{@builder.text_field(attribute_name, merged_input_options)}".html_safe
+  end
+end
+
+f.input :money, as: :currency
+
+# app/inputs/date_tiem_input.rb
+class DateTimeInput < SimpleForm::Inputs::DateTimeInput
+  def input(wrapper_options)
+    template.content_tag(:div, super)
+  end
+end
+
+# app/inputs/collection_select_input.rb
+class CollectionSelectInput < SimpleForm::Inputs::CollectionSelectInput
+  def input_html_classes
+    super.push('chosen')
+  end
+end
+
+# app/inputs/custom_inputs/numeric_input
+module CustomInputs
+  class NumericInput < SimpleForm::Inputs::NumericInput
+    def input_html_clases
+      super.push('no-spinner')
+    end
+  end
+end
+
+# config/simple_form.rb
+config.custom_inputs_namespaces << "CustomInputs"
+
+def custom_form_for(object, *args, &block)
+  options = args.extract_options!
+  simple_form_for(object, *(args << options.merge(builder: CustomFormBuilder)), &block)
+end
+
+class CustomFormBuilder < SimpleForm::FormBuilder
+  def input(attributes_name, options = {}, &block)
+    super(attribute_name, options.merge(label: false), &block)
+  end
+end
+
+f.input :role, prompt: :translate
+f.input :role, collection: [:admin, :editor]
+
+
+
+
+
+
+
 
 ```
 
@@ -196,9 +260,31 @@ end
   <%= f.select :role, Role.all.map { |r| [r.name, r.id, { class: r.company.id }] }, include_blank: true %>
 <% end %>
   
-<input id="" name="" type="" value="">
-<label class="" for=""></label>
-<input id="" name="" type="" value="" />
-<label class="" for=""></label>
+<input id="user_options_true" name="user[options]" type="radio" value="true">
+<label class="collection_radio_buttons" for="user_options_true">Yes</label>
+<input id="user_options_false" name="user[options]" type="radio" value="false" />
+<label class="collection_radio_buttons" for="user_options_false">No</label>
+  
+<input name="user[options][]" type="hidden" value="" />
+<input id="user_options_true" name="user[options][]" type="checkbox" value="true" />
+<label class="collection_check_box" for="user_options_true">Yes</label>
+<input name="user[options][]" type="hidden" value="" />
+<input id="user_options_false" name="user[options][]" type="checkbox" value="false" />
+<label class="collection_check_box" role="user_options_false">No</label>
+
+
+  
+  
+  
+  
+  
   
 ```
+
+
+```yml
+
+```
+
+
+
