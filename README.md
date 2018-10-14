@@ -356,6 +356,9 @@ class User
   end
 end
 
+f.input :role, prompt: :tranlate
+f.input :role, collection: [:admin, :editor]
+
 ```
 
 ```html
@@ -460,6 +463,94 @@ Dir[Rails.root.join('lib/components/**/*.rb')].each { |f| require f }
 
 
 ```yml
+en:
+  simple_form:
+    labels:
+      user:
+        usernaem: 'User name'
+        password: 'Password'
+    hints:
+      user:
+        username: 'User name to sign in.'
+        password: 'No special characters, please.'
+    placeholders:
+      user:
+        username: 'Your username'
+        password: '****'
+    include_blanks:
+      user:
+        age: 'Rather not say'
+    prompts:
+      user:
+        role: 'Select your role'
+        
+en:
+  simple_form:
+    labels:
+      user:
+        username: 'User name'
+        password: 'Password'
+        edit:
+          username: 'Change user name'
+          password: 'Change password'
+          
+en:
+  simple_form:
+    labels:
+      defaults:
+        username: 'User name'
+        password: 'Password'
+        new:
+          usernaem: 'Choose a user name'
+     hints:
+       defaults:
+         username: 'User name to sign in.'
+         password: 'No special characters, please.'
+     placeholders:
+       defaults:
+         username: 'Your username'
+         password: '****'
+         
+en:
+  simple_form:
+    options:
+      user:
+        role:
+          admin: 'Administrator'
+          editor: 'Editor'
+          
+en: 
+  helpers:
+    submit:
+      user:
+        create: "Add %{model}"
+        update: "Save Changes"
+
+en:
+  activerecord:
+    models:
+      admin/user: User
+    attributes:
+      admin/user:
+        name: Name
+        
+en:
+  simple_from:
+    labels:
+      admin_user:
+        name: Name
+
+en:
+  simple_form:
+    labels:
+      posts:
+        title: 'Post title'
+    hints:
+      posts:
+        title: 'A good title'
+    placeholders:
+      posts:
+        title: 'Once upon a time...'
 
 ```
 
