@@ -225,6 +225,137 @@ class User
   end
 end
 
+config.wrappers tag: :div, class: :input,
+                error_class: :filed_with_errors,
+                valid_class: :field_without_errors do |b|
+  b.use :html5
+  b.optional :pattern
+  b.use :maxlength
+  b.use :placeholder
+  b.use :readonly
+  b.use :label_input
+  b.use :hint, wrap_with: { tag: :span, class: :hint }
+  b.use :error, wrap_with: { tag: :span, class: :error }
+end
+
+:label
+:input
+:label_input
+:hint
+:error
+
+config.wrappers do |b|
+  b.use :placeholder
+  b.use :label_input
+  b.wrapper tag: :div, class: 'separator' do |component|
+    component.use :hint, wrap_with: { tag: :span, class: :hint }
+    component.use :error, wrap_with: { tag: :span, class: :error }
+  end
+end
+
+config.wrappers do |b|
+  b.use :label_input, class: 'label-input-class', error_class: 'is-invalid', valid_class: 'is-valid'
+end
+
+config.wrappers do |b|
+  b.use :placeholder
+  b.use :label_input
+  b.wrapper :my_wrapper, tag: :div, class: 'separator', html: { id: 'my_wrapper_id' } do ||
+    component.use :hint, wrap_with: { tag: :span, class: :hint }
+    component.use :error, wrap_with: { tag: :span, class: :error }
+  end
+end
+
+f.input :name, my_wrapper:false
+f.input :name, my_wrapper_html: { id: 'special_id' }
+f.input :name, my_wrapper_tag: :p
+
+config.wrappers :small do |b|
+  b.use :placeholder
+  b.use :label_input
+end
+
+simple_form_for @user, wrapper: :small do |f|
+  f.input :name
+end
+simple_form_for @user do |f|
+  f.input :name,wrapper: :small
+end
+
+config.wrappers placeholder: false do |b|
+  b.use :placeholder
+  b.use :label_input
+  b.wrapper tag: :div, class: 'separator' do |component|
+    component.optional :hint, wrap_with: { tag: :span, class: :hint }
+    component.use :error, wrap_with: { tag: :span, class: :error }
+  end
+end
+
+b.wrapper tag: :span, class: 'hint', unless_blank: true do |component|
+  component.optional :hint
+end
+
+:label
+:input
+:label_input
+:hint
+:error
+
+config.wrappers :with_numbers, tag: 'div', class: 'row', error_class: 'error' do |b|
+  b.use :html5
+  b.use :number, wrap_with: { tag: 'div', class: 'span1 number' }
+  b.wrapper tag: 'div', class: 'span8' do |ba|
+    ba.use :placeholder
+    ba.use :label
+    ba.use :input
+    ba.use :error, wrap_with: { tag: 'span', class: 'help-inline' }
+    ba.use :hint, wrap_with: { tag: 'p', class: 'help-block' }
+  end
+end
+
+config.wrappers tag: :div do |b|
+  b.use :html5
+  b.use :label_input
+end
+
+config.wrappers tag: :div do |b|
+  b.use :label_input
+end
+
+SimpleForm.browser_validations = false
+
+class User
+  include ActiveModel::Model
+  attr_accessor :id, :name
+end
+
+class UserPresenter < SimpleDelegator
+  def to_model
+    self
+  end
+end
+
+class User
+  extend activeModel::Naming
+  attr_accessor :id, :name
+  def to_model
+    self
+  end
+  def to_key
+    id
+  end
+  def persisted?
+    false
+  end
+end
+
+class User
+  attr_accessor :id, :name
+  def persisted?
+    false
+  end
+end
+
 ```
 
 ```html
@@ -287,16 +418,38 @@ end
 <label class="collection_check_box" for="user_options_true">Yes</label>
 <input name="user[options][]" type="hidden" value="" />
 <input id="user_options_false" name="user[options][]" type="checkbox" value="false" />
-<label class="collection_check_box" role="user_options_false">No</label>
+<label class="collection_check_box" role="user_options_false">No</label> 
+  
+  <%= simple_form_for @blog do |f| %>
+    <div class="row">
+      <div class="span1 number">
+        1
+      </div>
+      <div class="span8">
+        <%= f.input :title %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="span1 number">
+        2
+      </div>
+      <div class="span8">
+        <%= f.input :body, as: :text %>
+      </div>
+    </div>
+  <% end %>
+  
+<%= simple_form_for @blog, wrapper: :with_numbers do |f| %>  
+  <%= f.input :title, number: 1 %>
+  <%= f.input :body, as: :text, number: 2 %>
+<% end %>
 
+# config/initializes/simple_form.rb
+Dir[Rails.root.join('lib/components/**/*.rb')].each { |f| require f }
 
+<%= simple_form_for(resource, html: { novalidate: true }) do |form| %>
+<%= f.input :expires_at, as: :date, html5: true %>
   
-  
-  
-  
-  
-  
-
   
 <%= simple_form_for(@user, as: :user, method: :post, url: users_path) do |f| %>
   <% f.input :name %>
